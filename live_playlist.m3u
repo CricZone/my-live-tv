@@ -1,0 +1,3 @@
+#EXTM3U
+#EXTINF:-1 tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIW0u5DJIhE9R9h1U50kmFb77UIq3H1XuNJyhOcBGX9A&s=10", Somoy TV
+https://youtube.com/api/v1/live/manifest/video_id/hOX0_kkHpmI/format/m3u8
