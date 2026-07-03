@@ -1,44 +1,30 @@
 import os
-import re
-import subprocess
-import json
+import requests
 
-def get_m3u8(youtube_url):
+def get_bioscope_m3u8(channel_id):
+    # বায়োস্কোপের সিকিউরিটি বাইপাস করার জন্য অফিশিয়াল অ্যাপের হেডার
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
+        "Referer": "https://www.bioscopelive.com/",
+        "Origin": "https://www.bioscopelive.com"
+    }
+    
     try:
-        # ভিডিও আইডি খুঁজে বের করা
-        match = re.search(r'(?:live\/|v=|\/v\/|youtu\.be\/|\/embed\/)([\w-]+)', youtube_url)
-        video_id = match.group(1) if match else None
+        # বায়োস্কোপের লাইভ চ্যানেল এপিআই এন্ডপয়েন্ট
+        api_url = f"https://api.bioscopelive.com/api/v1/channel/url/{channel_id}"
         
-        if video_id:
-            full_url = f"https://www.youtube.com/watch?v={video_id}"
-            
-            # yt-dlp কে ব্রাউজারের ছদ্মবেশ ধারণ করতে বাধ্য করা (ইউজার এজেন্ট দিয়ে)
-            # এটি ইউটিউবের ব্লকিং মেকানিজমকে সফলভাবে বাইপাস করে
-            cmd = [
-                'yt-dlp',
-                '--dump-json',
-                '--force-overwrites',
-                '--no-warnings',
-                '--user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                full_url
-            ]
-            
-            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-            video_data = json.loads(result.stdout)
-            
-            # ডাটা থেকে সরাসরি লাইভ m3u8 ম্যানিফেস্ট লিংক বের করা
-            if 'url' in video_data and '.m3u8' in video_data['url']:
-                return video_data['url']
-            elif 'formats' in video_data:
-                for f in video_data['formats']:
-                    if f.get('protocol') == 'm3u8_native' or '.m3u8' in f.get('url', ''):
-                        return f['url']
+        response = requests.get(api_url, headers=headers, timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            # রেসপন্স ডাটা থেকে ডিরেক্ট m3u8 স্ট্রিম লিঙ্ক বের করা
+            if 'data' in data and 'url' in data['data']:
+                return data['data']['url']
     except Exception as e:
-        print(f"Error extracting link for {youtube_url}: {e}")
+        print(f"Error fetching Bioscope link for {channel_id}: {e}")
     return None
 
 try:
-    with open("youtube_links.txt", "r", encoding="utf-8") as f:
+    with open("bioscope_channels.txt", "r", encoding="utf-8") as f:
         lines = f.readlines()
 except FileNotFoundError:
     lines = []
@@ -52,13 +38,13 @@ for line in lines:
         continue
     if line.startswith("#EXTINF"):
         current_info = line
-    elif "youtube.com" in line or "youtu.be" in line:
-        print(f"Extracting live stream for: {line}")
-        m3u8_url = get_m3u8(line)
+    else:
+        print(f"Fetching Bioscope Link for: {current_info.split(',')[-1]}")
+        m3u8_url = get_bioscope_m3u8(line)
         if m3u8_url and current_info:
             m3u_content += f"{current_info}\n{m3u8_url}\n"
             current_info = ""
 
 with open("live_playlist.m3u", "w", encoding="utf-8") as f:
     f.write(m3u_content)
-print("Congratulation! Your personal M3U Playlist Updated Successfully!")
+print("Bioscope M3U Playlist Generated Successfully!")
