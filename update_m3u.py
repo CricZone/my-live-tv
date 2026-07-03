@@ -1,26 +1,40 @@
 import os
 import re
 import subprocess
+import json
 
 def get_m3u8(youtube_url):
     try:
-        # Extract video ID
+        # ভিডিও আইডি খুঁজে বের করা
         match = re.search(r'(?:live\/|v=|\/v\/|youtu\.be\/|\/embed\/)([\w-]+)', youtube_url)
         video_id = match.group(1) if match else None
         
         if video_id:
-            # Direct backup stream fetcher fallback using yt-dlp tool via subprocess
-            result = subprocess.run(
-                ['yt-dlp', '-g', f'https://www.youtube.com/watch?v={video_id}'],
-                capture_output=True, text=True, check=True
-            )
-            urls = result.stdout.strip().split('\n')
-            # Return the first m3u8 stream link found
-            for url in urls:
-                if '.m3u8' in url:
-                    return url
+            full_url = f"https://www.youtube.com/watch?v={video_id}"
+            
+            # yt-dlp কে ব্রাউজারের ছদ্মবেশ ধারণ করতে বাধ্য করা (ইউজার এজেন্ট দিয়ে)
+            # এটি ইউটিউবের ব্লকিং মেকানিজমকে সফলভাবে বাইপাস করে
+            cmd = [
+                'yt-dlp',
+                '--dump-json',
+                '--force-overwrites',
+                '--no-warnings',
+                '--user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                full_url
+            ]
+            
+            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+            video_data = json.loads(result.stdout)
+            
+            # ডাটা থেকে সরাসরি লাইভ m3u8 ম্যানিফেস্ট লিংক বের করা
+            if 'url' in video_data and '.m3u8' in video_data['url']:
+                return video_data['url']
+            elif 'formats' in video_data:
+                for f in video_data['formats']:
+                    if f.get('protocol') == 'm3u8_native' or '.m3u8' in f.get('url', ''):
+                        return f['url']
     except Exception as e:
-        print(f"Error fetching for {youtube_url}: {e}")
+        print(f"Error extracting link for {youtube_url}: {e}")
     return None
 
 try:
@@ -39,7 +53,7 @@ for line in lines:
     if line.startswith("#EXTINF"):
         current_info = line
     elif "youtube.com" in line or "youtu.be" in line:
-        print(f"Processing: {line}")
+        print(f"Extracting live stream for: {line}")
         m3u8_url = get_m3u8(line)
         if m3u8_url and current_info:
             m3u_content += f"{current_info}\n{m3u8_url}\n"
@@ -47,4 +61,4 @@ for line in lines:
 
 with open("live_playlist.m3u", "w", encoding="utf-8") as f:
     f.write(m3u_content)
-print("M3U Playlist Re-Generated Successfully with yt-dlp!")
+print("Congratulation! Your personal M3U Playlist Updated Successfully!")
