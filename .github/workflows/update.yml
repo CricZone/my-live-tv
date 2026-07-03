@@ -2,7 +2,7 @@ name: Auto Update M3U
 on:
   schedule:
     - cron: '0 */3 * * *' # প্রতি ৩ ঘণ্টা পর পর অটো রান হবে
-  workflow_dispatch: # ম্যানুয়ালি ক্লিক করে টেস্ট করার জন্য
+  workflow_dispatch: # ম্যানুয়ালি ক্লিক করে রান করার বাটন
 
 jobs:
   build:
@@ -18,19 +18,16 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Install Latest Tools
-      run: |
-        pip install --upgrade pip
-        pip install requests
-        pip install --upgrade yt-dlp
+    - name: Install Dependencies
+      run: pip install requests
 
-    - name: Execute Personal Code
+    - name: Run Bioscope Script
       run: python update_m3u.py
 
-    - name: Push Generated Playlist
+    - name: Commit and Push M3U File
       run: |
-        git config --global user.name 'My Custom Bot'
-        git config --global user.email 'mybot@github.com'
+        git config --global user.name 'Bioscope Bot'
+        git config --global user.email 'bot@bioscope.com'
         git add live_playlist.m3u
-        git commit -m "My Live TV Playlist Updated" || exit 0
+        git commit -m "Bioscope Links Auto Updated" || exit 0
         git push
