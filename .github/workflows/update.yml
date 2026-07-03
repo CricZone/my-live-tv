@@ -1,8 +1,8 @@
 name: Auto Update M3U
 on:
   schedule:
-    - cron: '0 */3 * * *' # Every 3 hours automatically
-  workflow_dispatch: # Allows manual click to update
+    - cron: '0 */3 * * *' # প্রতি ৩ ঘণ্টা পর পর অটো রান হবে
+  workflow_dispatch: # ম্যানুয়ালি ক্লিক করে টেস্ট করার জন্য
 
 jobs:
   build:
@@ -18,18 +18,19 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Install Dependencies
+    - name: Install Latest Tools
       run: |
+        pip install --upgrade pip
         pip install requests
         pip install --upgrade yt-dlp
 
-    - name: Run Converter Script
+    - name: Execute Personal Code
       run: python update_m3u.py
 
-    - name: Commit and Push M3U File
+    - name: Push Generated Playlist
       run: |
-        git config --global user.name 'Github Bot'
-        git config --global user.email 'bot@github.com'
+        git config --global user.name 'My Custom Bot'
+        git config --global user.email 'mybot@github.com'
         git add live_playlist.m3u
-        git commit -m "Auto Updated Playlist with yt-dlp" || exit 0
+        git commit -m "My Live TV Playlist Updated" || exit 0
         git push
