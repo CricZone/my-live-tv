@@ -19,7 +19,9 @@ jobs:
         python-version: '3.x'
 
     - name: Install Dependencies
-      run: pip install requests
+      run: |
+        pip install requests
+        pip install --upgrade yt-dlp
 
     - name: Run Converter Script
       run: python update_m3u.py
@@ -29,5 +31,5 @@ jobs:
         git config --global user.name 'Github Bot'
         git config --global user.email 'bot@github.com'
         git add live_playlist.m3u
-        git commit -m "Auto Updated Playlist" || exit 0
+        git commit -m "Auto Updated Playlist with yt-dlp" || exit 0
         git push
