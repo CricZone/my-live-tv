@@ -1,7 +1,7 @@
 #EXTM3U
 
 #EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/JetpackDuba/Gitr/master/images/somoy.png", Somoy TV
-https://www.youtube.com/embed/hOX0_kkHpmI
+https://youtube-m3u8-beta.vercel.app/live/hOX0_kkHpmI.m3u8
 
 #EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/JetpackDuba/Gitr/master/images/jamuna.png", Jamuna TV
-https://www.youtube.com/embed/9K5G_vC-9gM
+https://youtube-m3u8-beta.vercel.app/live/9K5G_vC-9gM.m3u8
