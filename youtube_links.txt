@@ -1,3 +1,7 @@
-#EXTINF:-1 tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIW0u5DJIhE9R9h1U50kmFb77UIq3H1XuNJyhOcBGX9A&s=10", Somoy TV
-https://www.youtube.com/live/hOX0_kkHpmI
+#EXTM3U
 
+#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/JetpackDuba/Gitr/master/images/somoy.png", Somoy TV
+https://www.youtube.com/embed/hOX0_kkHpmI
+
+#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/JetpackDuba/Gitr/master/images/jamuna.png", Jamuna TV
+https://www.youtube.com/embed/9K5G_vC-9gM
