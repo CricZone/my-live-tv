@@ -1,5 +1,8 @@
 #EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/JetpackDuba/Gitr/master/images/somoy.png", Somoy TV
-https://www.youtube.com/live/hOX0_kkHpmI
+somoy
 
 #EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/JetpackDuba/Gitr/master/images/jamuna.png", Jamuna TV
-https://www.youtube.com/watch?v=9K5G_vC-9gM
+jamuna
+
+#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/JetpackDuba/Gitr/master/images/independent.png", Independent TV
+independent
